@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fa-IR" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>جستجوی 118</title>
+  <link href="bootstrap.min.css" rel="stylesheet">
+  <style>
+    #results-table tbody tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="text-center">جستجوی اطلاعات</h1>
+    <div class="mb-3">
+      <input id="search-input" type="text" class="form-control" placeholder="عبارت جستجو را وارد کنید" />
+    </div>
+    <div class="table-responsive mt-4">
+      <table id="results-table" class="table table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>ردیف</th>
+            <th>نام خانوادگی</th>
+            <th>سمت</th>
+            <th>آدرس</th>
+            <th>شماره تلفن</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    let debounceTimeout;
+
+    function fetchData(query) {
+      if (query.trim() === "") return;
+
+      const apiUrl = `http://localhost:8000/?q=${query}`;
+
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const tableBody = document.querySelector("#results-table tbody");
+          tableBody.innerHTML = "";
+
+          if (data && data.length > 0) {
+            data.forEach((item) => {
+              const row = `
+                <tr>
+                  <td>${item.name}</td>
+                  <td>${item.lastName}</td>
+                  <td>${item.position}</td>
+                  <td>${item.address}</td>
+                  <td>${item.phone}</td>
+                </tr>
+              `;
+              tableBody.insertAdjacentHTML("beforeend", row);
+            });
+          } else {
+            const row = `
+              <tr>
+                <td colspan="5" class="text-center">هیچ نتیجه‌ای یافت نشد</td>
+              </tr>
+            `;
+            tableBody.insertAdjacentHTML("beforeend", row);
+          }
+        })
+        .catch(error => console.error("خطا در دریافت داده‌ها:", error));
+    }
+
+    document.getElementById("search-input").addEventListener("input", function() {
+      clearTimeout(debounceTimeout);
+
+      debounceTimeout = setTimeout(function() {
+        const query = document.getElementById("search-input").value;
+        fetchData(query);
+      }, 500);
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+      fetchData("");
+    });
+  </script>
+  <script src="bootstrap.bundle.min.js"></script>
+</body>
+</html>

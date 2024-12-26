@@ -95,13 +95,14 @@ The web interface is built with Bootstrap for styling and provides an intuitive 
 
 ```
 .
-├── app/                 # PHP extract and import scripts
+├── data/                # PHP extract and import scripts
+├── frontend/            # PHP extract and import scripts
 ├── meili_data/          # Meilisearch data persistence
 ├── docker-compose.yml   # Docker Compose configuration
 ├── Dockerfile           # PHP Dockerfile
 ├── README.md            # Project documentation
 ├── api.php              # API application file
-└── load.php            # Loading .env data
+└── load.php             # Loading .env data
 ```
 
 ## License
