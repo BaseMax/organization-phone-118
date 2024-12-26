@@ -20,7 +20,7 @@ try {
     $data = json_encode([
         "q" => $query,
         "attributesToRetrieve" => ["name", "lastName", "phone", "address", "position"],
-        "limit" => 100
+        "limit" => 10
     ]);
 
     $ch = curl_init($url);

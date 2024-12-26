@@ -6,7 +6,7 @@
   <title>جستجوی 118</title>
   <link href="bootstrap.min.css" rel="stylesheet">
   <style>
-    #results-table tbody tr:hover {
+    #results-table tbody tr:hover, #results-table tbody tr:hover td {
       background-color: #f1f1f1;
     }
   </style>
@@ -37,8 +37,6 @@
     let debounceTimeout;
 
     function fetchData(query) {
-      if (query.trim() === "") return;
-
       const apiUrl = `http://localhost:8000/?q=${query}`;
 
       fetch(apiUrl)
@@ -81,7 +79,7 @@
       }, 500);
     });
 
-    document.addEventListener("DOMContentLoaded", function() {
+    window.addEventListener("load", function() {
       fetchData("");
     });
   </script>
