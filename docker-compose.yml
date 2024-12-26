@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./app:/var/www/html
+    environment:
+      - MEILISEARCH_URL=http://meilisearch:7700
+      - API_KEY=your_meilisearch_api_key
+      - INDEX_NAME=your_index_name
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: meilisearch
+    ports:
+      - "7700:7700"
+    volumes:
+      - ./meili_data:/meili_data
+    environment:
+      MEILI_MASTER_KEY: your_meilisearch_api_key
