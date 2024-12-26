@@ -99,7 +99,7 @@ The web interface is built with Bootstrap for styling and provides an intuitive 
 ├── Dockerfile           # PHP Dockerfile
 ├── README.md            # Project documentation
 ├── api.php              # API application file
-└── _load.php            # Loading .env data
+└── load.php            # Loading .env data
 ```
 
 ## License

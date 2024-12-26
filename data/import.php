@@ -1,5 +1,5 @@
 <?php
-require_once "../_load.php";
+require_once "../load.php";
 
 use Meilisearch\Client;
 
