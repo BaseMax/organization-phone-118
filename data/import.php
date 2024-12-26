@@ -22,55 +22,12 @@ echo "Number of items: " . count($data) . PHP_EOL;
 
 $client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_MASTER_KEY']);
 
+$indexName = $_ENV['INDEX_NAME'];
+
 try {
-    try {
-        $index = $client->getIndex($_ENV['INDEX_NAME']);
-        echo "Index already exists, exiting successfully." . PHP_EOL;
-        exit;
-    } catch (Exception $e) {
-        if ($e->getCode() !== 404) {
-            die("Error checking index existence: " . $e->getMessage());
-        }
-    }
-
-    $indexCreationTask = $client->createIndex($_ENV['INDEX_NAME'], [
-        'primaryKey' => 'id',
-    ]);
-
-    if (!isset($indexCreationTask['taskUid'])) {
-        die("Index creation task failed to return taskUid.");
-    }
-
-    while (true) {
-        $tasks = $client->getTasks();
-        $taskStatus = null;
-
-        foreach ($tasks as $task) {
-            if ($task['uid'] === $indexCreationTask['taskUid']) {
-                $taskStatus = $task['status'];
-                break;
-            }
-        }
-
-        if ($taskStatus === 'succeeded') {
-            break;
-        }
-        if ($taskStatus === 'failed') {
-            die("Index creation failed.");
-        }
-        sleep(1);
-    }
-
-    $index = $client->getIndex($_ENV['INDEX_NAME']);
-    echo "Index: ";
-    var_dump($index);
-
-    $index->updateFilterableAttributes(['name', 'lastName', 'phone', 'address', 'position']);
-
-    echo "Filterable attributes updated successfully." . PHP_EOL;
-
+    $index = $client->index($indexName);
 } catch (Exception $e) {
-    die("Error during index creation or filterable attribute update: " . $e->getMessage());
+    die("Error accessing or creating the index: " . $e->getMessage());
 }
 
 $documents = [];
@@ -79,32 +36,14 @@ foreach ($data as $key => $row) {
     $lastName = $row[1] ?? null;
 
     if ($name && $lastName) {
-        $searchResults = $index->search('', [
-            'filter' => "name = '$name' AND lastName = '$lastName'"
-        ]);
-
-        $existingDocument = $searchResults->getHits();
-
-        if ($existingDocument) {
-            $existingId = $existingDocument[0]['id'];
-            $documents[] = [
-                'id' => $existingId,
-                'name' => $name,
-                'lastName' => $lastName,
-                'phone' => $row[2] ?? $existingDocument[0]['tel'],
-                'address' => $row[3] ?? $existingDocument[0]['address'],
-                'position' => $row[4] ?? $existingDocument[0]['position'],
-            ];
-        } else {
-            $documents[] = [
-                'id' => $key + 1,
-                'name' => $name,
-                'lastName' => $lastName,
-                'phone' => $row[2] ?? null,
-                'address' => $row[3] ?? null,
-                'position' => $row[4] ?? null,
-            ];
-        }
+        $documents[] = [
+            'id' => $key + 1,
+            'name' => $name,
+            'lastName' => $lastName,
+            'phone' => $row[2] ?? null,
+            'address' => $row[3] ?? null,
+            'position' => $row[4] ?? null,
+        ];
     }
 }
 
@@ -114,3 +53,19 @@ try {
 } catch (Exception $e) {
     die("Error processing data in Meilisearch: " . $e->getMessage());
 }
+
+try {
+    $index->updateFilterableAttributes([
+        'id',
+        'name',
+        'lastName',
+        'phone',
+        'address',
+        'position',
+    ]);
+    echo "Filterable attributes updated successfully." . PHP_EOL;
+} catch (Exception $e) {
+    die("Error updating filterable attributes: " . $e->getMessage());
+}
+
+echo "Data imported and filterable attributes set successfully." . PHP_EOL;
