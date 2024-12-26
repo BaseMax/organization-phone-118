@@ -5,14 +5,8 @@ header("Content-Type: application/json; charset=UTF-8");
 
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
 
-if (empty($meiliUrl) || empty($apiKey) || empty($indexName)) {
-    http_response_code(500);
-    echo json_encode(["error" => "Missing Meilisearch configuration in environment variables"]);
-    exit;
-}
-
 try {
-    $url = $meiliUrl . "/indexes/" . $indexName . "/search";
+    $url = $_ENV['MEILI_HOST'] . "/indexes/" . $_ENV['INDEX_NAME'] . "/search";
 
     $data = json_encode([
         "q" => $query,

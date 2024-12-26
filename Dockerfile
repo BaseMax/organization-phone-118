@@ -1,4 +1,4 @@
-FROM php:8.3-fpm
+FROM php:8.3-cli
 
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
@@ -9,8 +9,8 @@ WORKDIR /var/www/html
 
 COPY . .
 
-EXPOSE 9000
+EXPOSE 8000
 
-CMD ["php-fpm"]
+CMD ["sh", "-c", "php data/import.php && php -S 0.0.0.0:8000 -t . api.php"]
 
-HEALTHCHECK CMD curl --fail http://localhost:9000 || exit 1
+HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1

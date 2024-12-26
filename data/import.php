@@ -16,15 +16,14 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     die("Error decoding JSON: " . json_last_error_msg());
 }
 
-$client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_API_KEY']);
-$indexName = $_ENV['INDEX_NAME'];
+$client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_MASTER_KEY']);
 
 try {
-    $index = $client->createIndex($indexName, [
+    $index = $client->createIndex($_ENV['INDEX_NAME'], [
         'primaryKey' => 'id',
     ]);
 } catch (Exception $e) {
-    $index = $client->getIndex($indexName);
+    $index = $client->getIndex($_ENV['INDEX_NAME']);
 }
 
 $documents = [];

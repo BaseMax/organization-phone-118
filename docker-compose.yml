@@ -6,13 +6,11 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "9000:9000"
+      - "8000:8000"
     volumes:
       - ./app:/var/www/html
-    environment:
-      - MEILISEARCH_URL=http://meilisearch:7700
-      - API_KEY=your_meilisearch_api_key
-      - INDEX_NAME=your_index_name
+    env_file:
+      - .env
 
   meilisearch:
     image: getmeili/meilisearch:latest
@@ -22,4 +20,4 @@ services:
     volumes:
       - ./meili_data:/meili_data
     environment:
-      MEILI_MASTER_KEY: your_meilisearch_api_key
+      - .env
