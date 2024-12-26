@@ -16,7 +16,8 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     die("Error decoding JSON: " . json_last_error_msg());
 }
 
-$client = new Client($meiliHost, $meiliApiKey);
+$client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_API_KEY']);
+$indexName = $_ENV['INDEX_NAME'];
 
 try {
     $index = $client->createIndex($indexName, [
@@ -28,20 +29,40 @@ try {
 
 $documents = [];
 foreach ($data as $key => $row) {
-    $documents[] = [
-        'id' => $key + 1,
-        'name' => $row[0] ?? null,
-        'family' => $row[1] ?? null,
-        'tel' => $row[2] ?? null,
-        'address' => $row[3] ?? null,
-        'position' => $row[4] ?? null,
-    ];
+    $name = $row[0] ?? null;
+    $family = $row[1] ?? null;
+
+    if ($name && $family) {
+        $existingDocument = $index->search('', [
+            'filter' => "name = '$name' AND family = '$family'"
+        ])->getHits();
+
+        if ($existingDocument) {
+            $existingId = $existingDocument[0]['id'];
+            $documents[] = [
+                'id' => $existingId,
+                'name' => $name,
+                'family' => $family,
+                'tel' => $row[2] ?? $existingDocument[0]['tel'],
+                'address' => $row[3] ?? $existingDocument[0]['address'],
+                'position' => $row[4] ?? $existingDocument[0]['position'],
+            ];
+        } else {
+            $documents[] = [
+                'id' => $key + 1,
+                'name' => $name,
+                'family' => $family,
+                'tel' => $row[2] ?? null,
+                'address' => $row[3] ?? null,
+                'position' => $row[4] ?? null,
+            ];
+        }
+    }
 }
 
 try {
     $response = $index->addDocuments($documents);
-    
-    echo "Data inserted successfully: " . json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
+    echo "Data processed successfully: " . json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . PHP_EOL;
 } catch (Exception $e) {
-    die("Error inserting data into Meilisearch: " . $e->getMessage());
+    die("Error processing data in Meilisearch: " . $e->getMessage());
 }
