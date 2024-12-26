@@ -4,7 +4,7 @@ require_once __DIR__ . "/../load.php";
 use Meilisearch\Client;
 use Meilisearch\Index;
 
-$jsonFile = 'output.json';
+$jsonFile = __DIR__ . "/output.json";
 
 if (!file_exists($jsonFile)) {
     die("JSON file not found");
@@ -17,12 +17,24 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     die("Error decoding JSON: " . json_last_error_msg());
 }
 
+echo "JSON data loaded successfully." . PHP_EOL;
+echo "Number of items: " . count($data) . PHP_EOL;
+
 $client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_MASTER_KEY']);
 
 try {
+    try {
+        $index = $client->getIndex($_ENV['INDEX_NAME']);
+        echo "Index already exists, exiting successfully." . PHP_EOL;
+        exit;
+    } catch (Exception $e) {
+        if ($e->getCode() !== 404) {
+            die("Error checking index existence: " . $e->getMessage());
+        }
+    }
+
     $indexCreationTask = $client->createIndex($_ENV['INDEX_NAME'], [
         'primaryKey' => 'id',
-        'filterableAttributes' => ['name', 'lastName', 'phone', 'address', 'position'],
     ]);
 
     if (!isset($indexCreationTask['taskUid'])) {
@@ -32,7 +44,7 @@ try {
     while (true) {
         $tasks = $client->getTasks();
         $taskStatus = null;
-        
+
         foreach ($tasks as $task) {
             if ($task['uid'] === $indexCreationTask['taskUid']) {
                 $taskStatus = $task['status'];
@@ -49,10 +61,16 @@ try {
         sleep(1);
     }
 
-
     $index = $client->getIndex($_ENV['INDEX_NAME']);
+    echo "Index: ";
+    var_dump($index);
+
+    $index->updateFilterableAttributes(['name', 'lastName', 'phone', 'address', 'position']);
+
+    echo "Filterable attributes updated successfully." . PHP_EOL;
+
 } catch (Exception $e) {
-    die("Error during index creation: " . $e->getMessage());
+    die("Error during index creation or filterable attribute update: " . $e->getMessage());
 }
 
 $documents = [];
@@ -64,7 +82,7 @@ foreach ($data as $key => $row) {
         $searchResults = $index->search('', [
             'filter' => "name = '$name' AND lastName = '$lastName'"
         ]);
-        
+
         $existingDocument = $searchResults->getHits();
 
         if ($existingDocument) {

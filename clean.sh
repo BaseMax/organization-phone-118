@@ -1,11 +1,12 @@
 #!/bin/bash
 
-if [ -f "meili_data/.keep" ]; then
+if [ -f "meili_data/" ]; then
     echo "Keeping .keep file"
-    
-    find meili_data -mindepth 1 ! -name ".keep" -exec rm -rf {} +
+
+    rm -rf meili_data/data.ms
+    rm -rf meili_data/dumps
     
     echo "Cleaned up meili_data directory."
 else
-    echo ".keep file not found, aborting clean."
+    echo "meili_data directory not found, aborting clean."
 fi

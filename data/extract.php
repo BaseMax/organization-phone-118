@@ -1,7 +1,8 @@
 <?php
 require_once __DIR__ . "/../load.php";
 
-$htmlFile = 'demo.html';
+$htmlFile = __DIR__ . "/demo.html";
+$jsonFile = __DIR__ . "/output.json";
 
 if (!file_exists($htmlFile)) {
     die("File not found");
@@ -33,6 +34,6 @@ print_r($items);
 
 print "Number of items: " . count($items) . PHP_EOL;
 
-file_put_contents("output.json", json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+file_put_contents($jsonFile, json_encode($items, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
 print "Data extracted successfully" . PHP_EOL;

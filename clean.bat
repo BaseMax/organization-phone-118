@@ -1,11 +1,12 @@
 @echo off
 
-if exist "meili_data\.keep" (
+IF EXIST "meili_data\" (
     echo Keeping .keep file
 
-    for /d %%D in (meili_data\*) do rmdir /s /q "%%D"
-    del /q meili_data\*
+    del /f /q meili_data\data.ms
+    rmdir /s /q meili_data\dumps
+
     echo Cleaned up meili_data directory.
-) else (
-    echo .keep file not found, aborting clean.
+) ELSE (
+    echo meili_data directory not found, aborting clean.
 )

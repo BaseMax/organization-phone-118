@@ -21,6 +21,6 @@ EXPOSE 8080
 RUN ls -al /app
 RUN ls -al /app/data
 
-CMD ["sh", "-c", "sleep 5 && php data/import.php && if [ $? -eq 0 ]; then php -S 0.0.0.0:8080 -t /app index.html & php -S 0.0.0.0:8000 -t /app api.php; else echo 'Import script failed, exiting...'; exit 1; fi"]
+CMD ["sh", "-c", "bash run.sh"]
 
 HEALTHCHECK CMD curl --fail http://localhost:8000 || curl --fail http://localhost:8080 || exit 1
