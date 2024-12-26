@@ -12,7 +12,6 @@
     <div class="mb-3">
       <input id="search-input" type="text" class="form-control" placeholder="عبارت جستجو را وارد کنید" />
     </div>
-    <button id="search-button" class="btn btn-primary">جستجو</button>
     <div class="table-responsive mt-4">
       <table id="results-table" class="table table-bordered">
         <thead class="table-light">
@@ -24,48 +23,53 @@
             <th>شماره تلفن</th>
           </tr>
         </thead>
-        <tbody>
-        </tbody>
+        <tbody></tbody>
       </table>
     </div>
   </div>
 
   <script>
-    document.getElementById("search-button").addEventListener("click", function() {
-      const query = document.getElementById("search-input").value;
-      const apiUrl = `https://api.example.com/search?q=${query}`;
+    let debounceTimeout;
 
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          const tableBody = document.querySelector("#results-table tbody");
-          tableBody.innerHTML = "";
+    document.getElementById("search-input").addEventListener("input", function() {
+      clearTimeout(debounceTimeout); // Clear previous timeout
 
-          if (data && data.length > 0) {
-            data.forEach((item, index) => {
+      debounceTimeout = setTimeout(function() {
+        const query = document.getElementById("search-input").value;
+        if (query.trim() === "") return; // Do not search if input is empty
+
+        const apiUrl = `http://localhost:8080/?q=${query}`;
+
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            const tableBody = document.querySelector("#results-table tbody");
+            tableBody.innerHTML = "";
+
+            if (data && data.length > 0) {
+              data.forEach((item) => {
+                const row = `
+                  <tr>
+                    <td>${item.name}</td>
+                    <td>${item.lastName}</td>
+                    <td>${item.position}</td>
+                    <td>${item.address}</td>
+                    <td>${item.phone}</td>
+                  </tr>
+                `;
+                tableBody.insertAdjacentHTML("beforeend", row);
+              });
+            } else {
               const row = `
                 <tr>
-                  <td>${item.name}</td>
-                  <td>${item.lastName}</td>
-                  <td>${item.position}</td>
-                  <td>${item.address}</td>
-                  <td>${item.phone}</td>
+                  <td colspan="5" class="text-center">هیچ نتیجه‌ای یافت نشد</td>
                 </tr>
               `;
               tableBody.insertAdjacentHTML("beforeend", row);
-            });
-          } else {
-            const row = `
-              <tr>
-                <td colspan="6" class="text-center">هیچ نتیجه‌ای یافت نشد</td>
-              </tr>
-            `;
-            tableBody.insertAdjacentHTML("beforeend", row);
-          }
-        })
-        .catch(error => {
-          console.error("خطا در دریافت داده‌ها:", error);
-        });
+            }
+          })
+          .catch(error => console.error("خطا در دریافت داده‌ها:", error));
+      }, 500);
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
