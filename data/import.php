@@ -26,15 +26,18 @@ try {
     $index = $client->getIndex($_ENV['INDEX_NAME']);
 }
 
+var_dump($index);
+
 $documents = [];
 foreach ($data as $key => $row) {
     $name = $row[0] ?? null;
     $family = $row[1] ?? null;
 
     if ($name && $family) {
-        $existingDocument = $index->search('', [
+        $searchResults = $index->search('', [
             'filter' => "name = '$name' AND family = '$family'"
-        ])->getHits();
+        ]);
+        $existingDocument = $searchResults->getHits();
 
         if ($existingDocument) {
             $existingId = $existingDocument[0]['id'];

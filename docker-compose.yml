@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    networks:
+      - app_network
     ports:
       - "8000:8000"
     volumes:
@@ -13,9 +15,15 @@ services:
   meilisearch:
     image: getmeili/meilisearch:latest
     container_name: meilisearch
+    networks:
+      - app_network
     ports:
       - "7700:7700"
     volumes:
       - ./meili_data:/meili_data
     environment:
       - .env
+
+networks:
+  app_network:
+    driver: bridge
