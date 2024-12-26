@@ -22,8 +22,8 @@ This project allows users to search for contact information in an organization u
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/BaseMax/organization-phone-118
+cd organization-phone-118
 ```
 
 ### 2. Add Environment Variables
