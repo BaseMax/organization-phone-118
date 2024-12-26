@@ -7,11 +7,12 @@ services:
       - app_network
     ports:
       - "8000:8000"
+      - "8080:8080"
     volumes:
       - ./app:/var/www/html
     env_file:
       - .env
-
+  
   meilisearch:
     image: getmeili/meilisearch:latest
     container_name: meilisearch
@@ -21,7 +22,7 @@ services:
       - "7700:7700"
     volumes:
       - ./meili_data:/meili_data
-    environment:
+    env_file:
       - .env
 
 networks:
