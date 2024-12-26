@@ -8,6 +8,11 @@ This project allows users to search for contact information in an organization u
 - User-friendly web interface with RTL (Right-to-Left) support for Persian.
 - Dockerized setup for easy deployment.
 
+## Screenshots
+
+| ![Organization Phone 118 - Screenshot 1](screenshot/1.jpg) | ![Organization Phone 118 - Screenshot 2](screenshot/2.jpg) |
+|----------------------------------|----------------------------------|
+
 ## Prerequisites
 
 - Docker and Docker Compose installed on your system.
