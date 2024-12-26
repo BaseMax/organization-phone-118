@@ -1,7 +1,8 @@
 <?php
-require_once "../load.php";
+require_once __DIR__ . "/../load.php";
 
 use Meilisearch\Client;
+use Meilisearch\Index;
 
 $jsonFile = 'output.json';
 
@@ -19,14 +20,37 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 $client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_MASTER_KEY']);
 
 try {
-    $index = $client->createIndex($_ENV['INDEX_NAME'], [
+    $indexCreationTask = $client->createIndex($_ENV['INDEX_NAME'], [
         'primaryKey' => 'id',
     ]);
+    
+    while (true) {
+        $tasks = $client->getTasks();
+        $taskStatus = null;
+        
+        foreach ($tasks as $task) {
+            if ($task['uid'] === $indexCreationTask['taskUid']) {
+                $taskStatus = $task['status'];
+                break;
+            }
+        }
+
+        if ($taskStatus === 'succeeded') {
+            break;
+        }
+        if ($taskStatus === 'failed') {
+            die("Index creation failed.");
+        }
+        sleep(1);
+    }
+    $index = $client->getIndex($_ENV['INDEX_NAME']);
 } catch (Exception $e) {
     $index = $client->getIndex($_ENV['INDEX_NAME']);
+    
+    if (!($index instanceof Meilisearch\Index)) {
+        die("Failed to get the Meilisearch index correctly.");
+    }
 }
-
-var_dump($index);
 
 $documents = [];
 foreach ($data as $key => $row) {
@@ -37,6 +61,7 @@ foreach ($data as $key => $row) {
         $searchResults = $index->search('', [
             'filter' => "name = '$name' AND family = '$family'"
         ]);
+        
         $existingDocument = $searchResults->getHits();
 
         if ($existingDocument) {

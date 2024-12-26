@@ -1,5 +1,5 @@
 <?php
-require_once "../load.php";
+require_once __DIR__ . "/../load.php";
 
 $htmlFile = 'demo.html';
 

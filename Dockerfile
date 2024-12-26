@@ -20,6 +20,6 @@ EXPOSE 8000
 RUN ls -al /app
 RUN ls -al /app/data
 
-CMD ["sh", "-c", "pwd && ls -al && ls -al data && cd data && php import.php && cd .. && php -S 0.0.0.0:8000 -t . api.php"]
+CMD ["sh", "-c", "sleep 5 && php data/import.php && if [ $? -eq 0 ]; then php -S 0.0.0.0:8000 -t . api.php; else echo 'Import script failed, exiting...'; exit 1; fi"]
 
 HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1

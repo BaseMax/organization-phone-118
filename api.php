@@ -20,7 +20,7 @@ try {
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         "Content-Type: application/json",
-        "Authorization: Bearer " . $apiKey
+        "Authorization: Bearer " . $_ENV['MEILI_MASTER_KEY']
     ]);
 
     curl_setopt($ch, CURLOPT_TIMEOUT, 30);
