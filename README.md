@@ -23,11 +23,13 @@ cd <repository-folder>
 
 ### 2. Add Environment Variables
 
-Update the following values in `docker-compose.yml` and `index.php`:
+Update the following values in `.env`:
 
 - `MEILISEARCH_URL`: URL of the Meilisearch instance.
 - `API_KEY`: Your Meilisearch API key.
 - `INDEX_NAME`: Name of the index to query.
+
+And run `composer install` and `composer dump-autoload`.
 
 ### 3. Start the Services
 
