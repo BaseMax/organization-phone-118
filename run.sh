@@ -15,7 +15,7 @@ if [ $? -eq 0 ]; then
     php -S 0.0.0.0:8080 -t /app/frontend &
 
     echo "Starting PHP server for API on port 8000..."
-    php -S 0.0.0.0:8000 -t /app api.php
+    php -S 0.0.0.0:8000 -t /app/backend api.php
 else
     echo "Import script failed, exiting..."
     exit 1
