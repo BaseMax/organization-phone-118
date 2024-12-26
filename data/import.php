@@ -42,8 +42,8 @@ foreach ($data as $key => $row) {
             $documents[] = [
                 'id' => $existingId,
                 'name' => $name,
-                'family' => $family,
-                'tel' => $row[2] ?? $existingDocument[0]['tel'],
+                'lastName' => $family,
+                'phone' => $row[2] ?? $existingDocument[0]['tel'],
                 'address' => $row[3] ?? $existingDocument[0]['address'],
                 'position' => $row[4] ?? $existingDocument[0]['position'],
             ];
@@ -51,8 +51,8 @@ foreach ($data as $key => $row) {
             $documents[] = [
                 'id' => $key + 1,
                 'name' => $name,
-                'family' => $family,
-                'tel' => $row[2] ?? null,
+                'lastName' => $family,
+                'phone' => $row[2] ?? null,
                 'address' => $row[3] ?? null,
                 'position' => $row[4] ?? null,
             ];
