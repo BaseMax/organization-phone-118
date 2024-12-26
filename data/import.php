@@ -20,7 +20,7 @@ if (json_last_error() !== JSON_ERROR_NONE) {
 echo "JSON data loaded successfully." . PHP_EOL;
 echo "Number of items: " . count($data) . PHP_EOL;
 
-$client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_MASTER_KEY']);
+$client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_KEY']);
 
 $indexName = $_ENV['INDEX_NAME'];
 

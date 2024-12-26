@@ -37,7 +37,7 @@
     let debounceTimeout;
 
     function fetchData(query) {
-      const apiUrl = `http://localhost:8000/?q=${query}`;
+      const apiUrl = `/api.php?q=${query}`;
 
       fetch(apiUrl)
         .then(response => response.json())
