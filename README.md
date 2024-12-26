@@ -41,12 +41,12 @@ docker-compose up --build
 
 This will start:
 
-- PHP application on port 9000.
+- PHP application on port 8000.
 - Meilisearch on port 7700.
 
 ### 4. Access the Application
 
-- Open the browser at `http://localhost:9000` for the PHP application.
+- Open the browser at `http://localhost:8000` for the PHP application.
 - Meilisearch is available at `http://localhost:7700`.
 
 ## API Endpoint
@@ -63,7 +63,7 @@ This will start:
 **Example Request:**
 
 ```bash
-curl -X GET "http://localhost:9000/search?q=John"
+curl -X GET "http://localhost:8000/search?q=John"
 ```
 
 **Example Response:**
