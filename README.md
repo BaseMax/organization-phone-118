@@ -10,8 +10,8 @@ This project allows users to search for contact information in an organization u
 
 ## Screenshots
 
-| ![Organization Phone 118 - Screenshot 1](screenshot/1.jpg) | ![Organization Phone 118 - Screenshot 2](screenshot/2.jpg) |
-|----------------------------------|----------------------------------|
+| ![Organization Phone 118 - Screenshot 1](screenshot/1.jpg) | ![Organization Phone 118 - Screenshot 2](screenshot/2.jpg) | ![Organization Phone 118 - Screenshot 3](screenshot/3.jpg) |
+|----------------------------------|----------------------------------|----------------------------------|
 
 ## Prerequisites
 
