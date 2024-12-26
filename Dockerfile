@@ -11,6 +11,8 @@ COPY . .
 
 EXPOSE 8000
 
+RUN ls -al /var/www/html
+
 CMD ["sh", "-c", "php data/import.php && php -S 0.0.0.0:8000 -t . api.php"]
 
 HEALTHCHECK CMD curl --fail http://localhost:8000 || exit 1
