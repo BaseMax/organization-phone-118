@@ -1,14 +1,12 @@
 <?php
-header("Content-Type: application/json; charset=UTF-8");
+require "_load.php";
 
-define("MEILISEARCH_URL", "http://127.0.0.1:7700");
-define("API_KEY", "your_meilisearch_api_key");
-define("INDEX_NAME", "your_index_name");
+header("Content-Type: application/json; charset=UTF-8");
 
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
 
 try {
-    $url = MEILISEARCH_URL . "/indexes/" . INDEX_NAME . "/search";
+    $url = $meiliUrl . "/indexes/" . $indexName . "/search";
     $data = json_encode([
         "q" => $query,
         "attributesToRetrieve" => ["name", "lastName", "phone", "address", "position"],
@@ -21,7 +19,7 @@ try {
     curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         "Content-Type: application/json",
-        "Authorization: Bearer " . API_KEY
+        "Authorization: Bearer " . $apiKey
     ]);
 
     $response = curl_exec($ch);
@@ -29,6 +27,7 @@ try {
     curl_close($ch);
 
     if ($httpCode !== 200) {
+        http_response_code(500);
         echo json_encode(["error" => "Error fetching data from Meilisearch", "status" => $httpCode]);
         exit;
     }
@@ -36,5 +35,6 @@ try {
     $results = json_decode($response, true);
     echo json_encode($results["hits"], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 } catch (Exception $e) {
+    http_response_code(500);
     echo json_encode(["error" => "An unexpected error occurred: " . $e->getMessage()]);
 }
