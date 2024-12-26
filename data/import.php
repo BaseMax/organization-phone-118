@@ -22,8 +22,13 @@ $client = new Client($_ENV['MEILI_HOST'], $_ENV['MEILI_MASTER_KEY']);
 try {
     $indexCreationTask = $client->createIndex($_ENV['INDEX_NAME'], [
         'primaryKey' => 'id',
+        'filterableAttributes' => ['name', 'lastName', 'phone', 'address', 'position'],
     ]);
-    
+
+    if (!isset($indexCreationTask['taskUid'])) {
+        die("Index creation task failed to return taskUid.");
+    }
+
     while (true) {
         $tasks = $client->getTasks();
         $taskStatus = null;
@@ -43,23 +48,21 @@ try {
         }
         sleep(1);
     }
+
+
     $index = $client->getIndex($_ENV['INDEX_NAME']);
 } catch (Exception $e) {
-    $index = $client->getIndex($_ENV['INDEX_NAME']);
-    
-    if (!($index instanceof Meilisearch\Index)) {
-        die("Failed to get the Meilisearch index correctly.");
-    }
+    die("Error during index creation: " . $e->getMessage());
 }
 
 $documents = [];
 foreach ($data as $key => $row) {
     $name = $row[0] ?? null;
-    $family = $row[1] ?? null;
+    $lastName = $row[1] ?? null;
 
-    if ($name && $family) {
+    if ($name && $lastName) {
         $searchResults = $index->search('', [
-            'filter' => "name = '$name' AND family = '$family'"
+            'filter' => "name = '$name' AND lastName = '$lastName'"
         ]);
         
         $existingDocument = $searchResults->getHits();
@@ -69,7 +72,7 @@ foreach ($data as $key => $row) {
             $documents[] = [
                 'id' => $existingId,
                 'name' => $name,
-                'lastName' => $family,
+                'lastName' => $lastName,
                 'phone' => $row[2] ?? $existingDocument[0]['tel'],
                 'address' => $row[3] ?? $existingDocument[0]['address'],
                 'position' => $row[4] ?? $existingDocument[0]['position'],
@@ -78,7 +81,7 @@ foreach ($data as $key => $row) {
             $documents[] = [
                 'id' => $key + 1,
                 'name' => $name,
-                'lastName' => $family,
+                'lastName' => $lastName,
                 'phone' => $row[2] ?? null,
                 'address' => $row[3] ?? null,
                 'position' => $row[4] ?? null,
